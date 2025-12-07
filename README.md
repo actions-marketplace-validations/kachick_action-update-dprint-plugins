@@ -1,5 +1,10 @@
 # action-update-dprint-plugins
 
+**Deprecated: This repositoy is archived**
+
+**I do NOT recommend to use this action now, because some updating will not work.**\
+**See <https://github.com/kachick/action-update-dprint-plugins/issues/6#issuecomment-1658923284> for further detail**
+
 [![CI](https://github.com/kachick/action-update-dprint-plugins/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/kachick/action-update-dprint-plugins/actions/workflows/validate.yml?query=branch%3Amain++)
 
 GitHub Action to update [dprint](https://github.com/dprint/dprint) plugins in `dprint.json`
@@ -36,9 +41,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - id: update-dprint-plugins
-        uses: kachick/action-update-dprint-plugins@v1.0.0
+        uses: kachick/action-update-dprint-plugins@v2.0.0
         with:
           base-branch: 'main'
+          dprint-version: '0.40.1'
+
       # Enable `Allow auto-merge` in your repository settings if you need following steps
       - name: Merge sent PR
         # Checking `dprint fmt` did not make any diff even after updating plugins
@@ -68,19 +75,20 @@ Enable the following options in your repository settings
 
 All options should be specified with string. So true/false should be 'true'/'false'
 
-| name           | default             | options                       | description                                              |
-| -------------- | ------------------- | ----------------------------- | -------------------------------------------------------- |
-| base-branch    | (null)              | e.g 'main'                    | The branch into which you want updating PR merged        |
-| github-token   | ${{ github.token }} | e.g '${{ secrets.YOUR_PAT }}' | The token will be used to create PR                      |
-| dprint-version | (null)              | e.g '0.37.1'                  | Specific dprint version to use . Use latest if not given |
-| config-path    | 'dprint.json'       | e.g 'dprint-ci.json'          | Specific dprint config to use                            |
+| name           | default             | options                       | description                                                                                                                                           |
+| -------------- | ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| base-branch    | (null)              | e.g 'main'                    | The branch into which you want updating PR merged                                                                                                     |
+| github-token   | ${{ github.token }} | e.g '${{ secrets.YOUR_PAT }}' | The token will be used to create PR                                                                                                                   |
+| dprint-version | (null)              | e.g '0.40.1'                  | Specific dprint version to use. Should be specified                                                                                                   |
+| config-path    | 'dprint.json'       | e.g 'dprint-ci.json'          | Specific dprint config to use                                                                                                                         |
+| fmt            | false               | true/false                    | Run fmt and outputs the result in outputs.fmt if enabled. [It may fail from some reasons](https://github.com/dprint/dprint-plugin-prettier/issues/56) |
 
 ## Outputs
 
-| name   | patterns                                        | description                                                         |
-| ------ | ----------------------------------------------- | ------------------------------------------------------------------- |
-| pr_url | e.g. '`https://github.com/owner/repos/pull/42`' | Sent PR URL                                                         |
-| fmt    | 'true'/'false`                                  | Return true if diff was made in `dprint fmt` after updating plugins |
+| name   | patterns                                        | description                                                                                                       |
+| ------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| pr_url | e.g. '`https://github.com/owner/repos/pull/42`' | Sent PR URL                                                                                                       |
+| fmt    | true/false                                      | Return true if diff was made in `dprint fmt` after updating plugins. Can be used only in fmt in inputs is enabled |
 
 ## Motivation
 

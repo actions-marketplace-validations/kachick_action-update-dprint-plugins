@@ -13,13 +13,16 @@ inputs:
     required: true
     default: ${{ github.token }}
   dprint-version:
-    description: 'Specific dprint version to use (ex. 0.37.1)'
-    required: false
-    default: ''
+    description: 'Specific dprint version to use (ex. 0.40.1)'
+    required: true
   config-path:
     description: 'Specific dprint config to use (ex. dprint-ci.json)'
     required: true
     default: 'dprint.json'
+  fmt:
+    description: 'Run fmt and outputs the result in outputs.fmt if enabled. It may fail from some reasons'
+    required: false
+    default: false
 outputs:
   pr_url:
     description: 'Created PR URL'
@@ -66,7 +69,7 @@ runs:
         fi
       shell: bash
     - id: fmt
-      if: ${{ steps.update_plugins.outputs.update == 'true' }}
+      if: ${{ inputs.fmt == 'true' && steps.update_plugins.outputs.update == 'true' }}
       run: |
         command="dprint fmt --config ${{ inputs.config-path }}"
         ~/.dprint/bin/${command}
@@ -78,7 +81,7 @@ runs:
         fi
       shell: bash
     - id: pr
-      if: ${{ steps.update_plugins.outputs.update == 'true' || steps.fmt.outputs.fmt == 'true' }}
+      if: ${{ steps.update_plugins.outputs.update == 'true' && (inputs.fmt == 'false' || steps.fmt.outputs.fmt == 'true') }}
       run: |
         git push -u origin "${{ steps.setup.outputs.branch }}"
         echo "pr_url=$(gh pr create --fill --base ${{ inputs.base-branch}} --title 'Update dprint plugins' --body 'This PR has been created by https://github.com/kachick/action-update-dprint-plugins')" >> $GITHUB_OUTPUT
